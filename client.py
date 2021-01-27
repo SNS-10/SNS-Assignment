@@ -40,158 +40,160 @@ p_str=p_str.replace('\n','')
 
 p=int(p_str,16)  # Value of p in integer
 
-def pad(text):
-    while(len(text)%8!=0):
-        text+=b' '
-    
-    return text
 
-def trimKey(key_str):
+class Encrypt():
+    def pad(self,text):
+        while(len(text)%8!=0):
+            text+=b' '
+        
+        return text
 
-    key_str=key_str[0:24]
-    return key_str
+    def trimKey(self,key_str):
 
+        key_str=key_str[0:24]
+        return key_str
 
 
-def des3Decrypt(key_str,encrypted_text):
 
-    key=key_str
+    def des3Decrypt(self,key_str,encrypted_text):
 
-    cipher_decrypt = DES3.new(key, DES3.MODE_ECB) 
-    pl=cipher_decrypt.decrypt(encrypted_text)  # Return type is in bytes
+        key=key_str
 
-    #print(pl.decode())
-    '''
-    f=open('test/abc.mp4','wb')
-    f.write(pl)
-    f.close()
-    '''
+        cipher_decrypt = DES3.new(key, DES3.MODE_ECB) 
+        pl=cipher_decrypt.decrypt(encrypted_text)  # Return type is in bytes
 
-    return pl  # In Bytes
+        #print(pl.decode())
+        '''
+        f=open('test/abc.mp4','wb')
+        f.write(pl)
+        f.close()
+        '''
 
+        return pl  # In Bytes
 
 
 
-def des3Encrypt(key_str,msg):
-    #key = 'Sixteen byte key'
 
-    key=key_str
-    cipher_encrypt = DES3.new(key, DES3.MODE_ECB)
+    def des3Encrypt(self,key_str,msg):
+        #key = 'Sixteen byte key'
 
-    '''
+        key=key_str
+        cipher_encrypt = DES3.new(key, DES3.MODE_ECB)
 
+        '''
 
-    f=open('abc.mp4', 'rb')
-    content=f.read()
-    f.close()
-    '''
-    content = msg
 
-    plaintext=content
+        f=open('abc.mp4', 'rb')
+        content=f.read()
+        f.close()
+        '''
+        content = msg
 
-    #plaintext = 'Abhisek'
-    plaintext=pad(plaintext)      
+        plaintext=content
 
-    encrypted_text = cipher_encrypt.encrypt(plaintext)
+        #plaintext = 'Abhisek'
+        plaintext=self.pad(plaintext)      
 
-    #print(encrypted_text)
+        encrypted_text = cipher_encrypt.encrypt(plaintext)
 
-    return encrypted_text  # encrypted text is in bytes
+        #print(encrypted_text)
 
-    
+        return encrypted_text  # encrypted text is in bytes
 
+        
 
 
-def generateRandom():
-    no=random.randint(0,100)
-    no=str(no)
-    #print(no)
 
-    return no.encode()
+    def generateRandom(self):
+        no=random.randint(0,100)
+        no=str(no)
+        #print(no)
 
+        return no.encode()
 
 
-def createSharedKey(public_key_bob,pr_key_alice):
 
-    ka=int(pow(public_key_bob,pr_key_alice,p))  # shared key by alice
+    def createSharedKey(self,public_key_bob,pr_key_alice):
 
-    return ka
+        ka=int(pow(public_key_bob,pr_key_alice,p))  # shared key by alice
 
+        return ka
 
 
-def generatePublicKey(pr_key_alice):
 
+    def generatePublicKey(self,pr_key_alice):
 
-    public_key_alice=int(pow(g,pr_key_alice,p))  # Public key of Alice generated...
 
-    return public_key_alice
+        public_key_alice=int(pow(g,pr_key_alice,p))  # Public key of Alice generated...
 
+        return public_key_alice
 
 
 
-def generatePrivateKey():
 
-    pr_msg_alice=b'2020201020'
-    pr_nonce=generateRandom()
-    pr_msg_alice+=pr_nonce
+    def generatePrivateKey(self):
 
-    crypt_msg=hashlib.sha256()
-    crypt_msg.update(pr_msg_alice)
+        pr_msg_alice=b'2020201020'
+        pr_nonce=self.generateRandom()
+        pr_msg_alice+=pr_nonce
 
+        crypt_msg=hashlib.sha256()
+        crypt_msg.update(pr_msg_alice)
 
-    #print(crypt_msg.hexdigest())
 
-    pr_key_alice=crypt_msg.hexdigest()  # Gets private key in hashed string format (hex format)
-    pr_key_alice=int(pr_key_alice,16)  # key in integer..
+        #print(crypt_msg.hexdigest())
 
-    #print(pr_key_alice) 
+        pr_key_alice=crypt_msg.hexdigest()  # Gets private key in hashed string format (hex format)
+        pr_key_alice=int(pr_key_alice,16)  # key in integer..
 
+        #print(pr_key_alice) 
 
-    return pr_key_alice
 
-def generateRandomGroupKey():
+        return pr_key_alice
 
-    no=random.randint(pow(10,23),pow(10,24)-1)
-    no=str(no).encode()  # 24Byte key
-    #print(no)
+    def generateRandomGroupKey(self):
 
+        no=random.randint(pow(10,23),pow(10,24)-1)
+        no=str(no).encode()  # 24Byte key
+        #print(no)
 
-    crypt_msg=hashlib.sha256()
-    crypt_msg.update(no)
 
+        crypt_msg=hashlib.sha256()
+        crypt_msg.update(no)
 
-    #print(crypt_msg.hexdigest())
 
-    pr_key_alice=crypt_msg.hexdigest()  # Gets private key in hashed string format (hex format)
-    pr_key_alice=int(pr_key_alice,16)  # key in integer..
+        #print(crypt_msg.hexdigest())
 
-    print(len(no))
+        pr_key_alice=crypt_msg.hexdigest()  # Gets private key in hashed string format (hex format)
+        pr_key_alice=int(pr_key_alice,16)  # key in integer..
 
-    return pr_key_alice # int  return type
+        print(len(no))
 
+        return pr_key_alice # int  return type
 
 
 
 
 
-def keyCall(s):
 
-    prKey=generatePrivateKey()
+    def keyCall(self,s):
 
-    publicKey=generatePublicKey(prKey)
-    print(publicKey)
+        prKey=self.generatePrivateKey()
 
-    s.sendall(('K'+str(publicKey)).encode())
+        publicKey=self.generatePublicKey(prKey)
+        print(publicKey)
 
+        s.sendall(('K'+str(publicKey)).encode())
 
-    bob_public_key=s.recv(1024).decode()
 
-    print('Bob public key is '+str(bob_public_key))
+        bob_public_key=s.recv(1024).decode()
 
-    sharedKey=createSharedKey(int(bob_public_key),prKey)
+        print('Bob public key is '+str(bob_public_key))
 
+        sharedKey=self.createSharedKey(int(bob_public_key),prKey)
 
-    return str(sharedKey)
+
+        return str(sharedKey)
 
 
 
@@ -202,297 +204,301 @@ port=7004
 islogged=0
 tosend={}
 curr_user=""
-class myclient:
-    pass
 
 
-def serverthread(curr_port):
-    global toGrpFlag
-    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
-        s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
-        s.bind((host,int(curr_port)))
+obj = Encrypt()
 
-        s.listen() 
-        while True:
-            conn,addr=s.accept()
-            #print(conn)
-            print('Connected to ',addr)
-            #data=conn.recv(1024)
-            # print(data)
-            # data = data.decode()
-            '''if(data.split(b";")[0]!=b'sendfile'):
-                print(data.decode())
-            else:
-                # conn,addr=s.accept()
-                destfile = data.split(b";")[1].split(b"/")[-1]
-                data = (data.split(b";")[2])
+class Client_send(Encrypt):
 
-                with open(destfile,'ab') as f:
-                    f.write(data)
-                    # f.flush()
-                    while True:
-                        data = conn.recv(1024)  
-                             
-                        if(len(data)<1024):
-                            break        
+    def serverthread(self,curr_port):
+        global toGrpFlag
+        with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
+            s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+            s.bind((host,int(curr_port)))
+
+            s.listen() 
+            while True:
+                conn,addr=s.accept()
+                #print(conn)
+                print('Connected to ',addr)
+                #data=conn.recv(1024)
+                # print(data)
+                # data = data.decode()
+                '''if(data.split(b";")[0]!=b'sendfile'):
+                    print(data.decode())
+                else:
+                    # conn,addr=s.accept()
+                    destfile = data.split(b";")[1].split(b"/")[-1]
+                    data = (data.split(b";")[2])
+
+                    with open(destfile,'ab') as f:
                         f.write(data)
-                print("new file received")
-                f.close()'''
+                        # f.flush()
+                        while True:
+                            data = conn.recv(1024)  
+                                
+                            if(len(data)<1024):
+                                break        
+                            f.write(data)
+                    print("new file received")
+                    f.close()'''
 
-            data=conn.recv(1024)
-            print(data)
-            msg=data.decode()
+                data=conn.recv(1024)
+                print(data)
+                msg=data.decode()
 
-            print(msg)
+                print(msg)
 
-            
-            if(msg[0]=='K'):
-                tmp=int(msg[1:])  # Public key alice
-                #print('Alice public key: '+str(tmp))
-
-                server_key=generatePrivateKey()  # Created private key
-
-                #print('Server_key is '+str(server_key))
-
-                serv_public_key=generatePublicKey(server_key)  # created public key on server side
-
-                #print('Serv public key is '+str(serv_public_key))
-
-                conn.sendall(str(serv_public_key).encode())  # sent the public key to the server
-
-                kb=createSharedKey(tmp,server_key)
-                kb=trimKey(str(kb))
-
-                encrypt_msg_recvd=conn.recv(1024)
-
-                msg=des3Decrypt(kb,encrypt_msg_recvd)  # In Bytes..
-
-                msg=msg.decode()
-            
-            else:
-                msglist=msg.split(';')
-                encrypt_msg_recvd=conn.recv(1024)
-                kb=msglist[2]
-
-                msg=des3Decrypt(kb,encrypt_msg_recvd)  # In Bytes..
-
-                msg=msg.decode()
                 
+                if(msg[0]=='K'):
+                    tmp=int(msg[1:])  # Public key alice
+                    #print('Alice public key: '+str(tmp))
 
+                    server_key=obj.generatePrivateKey()  # Created private key
 
+                    #print('Server_key is '+str(server_key))
 
+                    serv_public_key=obj.generatePublicKey(server_key)  # created public key on server side
 
+                    #print('Serv public key is '+str(serv_public_key))
 
+                    conn.sendall(str(serv_public_key).encode())  # sent the public key to the server
 
-            ####################################################################
+                    kb=obj.createSharedKey(tmp,server_key)
+                    kb=obj.trimKey(str(kb))
 
-
-            mylst=msg.strip().split(';',2)
-            print(mylst)
-            if mylst[0]!='sendfile':
-                print(mylst[0])
-            else:
-                cont=b""
-                path=mylst[1].split('/')[-1]
-                cont=mylst[2].encode()
-                f=open(path,'wb')
-                while True:
                     encrypt_msg_recvd=conn.recv(1024)
 
-                    data=des3Decrypt(kb,encrypt_msg_recvd)  # In Bytes..
-                    #data=conn.recv(1024)
-                    cont+=data
-                    if len(data)<1024:
-                        break
+                    msg=obj.des3Decrypt(kb,encrypt_msg_recvd)  # In Bytes..
+
+                    msg=msg.decode()
                 
-                
-                f.write(cont)
-                f.close()
+                else:
+                    msglist=msg.split(';')
+                    encrypt_msg_recvd=conn.recv(1024)
+                    kb=msglist[2]
 
+                    msg=obj.des3Decrypt(kb,encrypt_msg_recvd)  # In Bytes..
 
-            
-
-            
-        
-        # s.close()
-
-def sendmsg(s,usr,mesage):
-    global toGrpFlag
-    strn = "port;"+usr+";"+curr_user
-    print(strn)
-    s.sendall(strn.encode())
-    data = s.recv(1024).decode()
-    mylst=data.split(";")
-    if(mylst[-1]=='0'):
-        print(mylst[0])
-    else:
-        if(mylst[-1]=='1G'):
-            toGrpFlag=True
-        for usr in mylst:
-            if usr!=mylst[-1]:
-                cli_port=int(usr)
-                with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
-
-                    if(toGrpFlag==False):
-
-                        s.connect((host,cli_port))
-                        ska=keyCall(s)  # For sending and receiving public keys  # shared key is in string here
-
-                        ska=trimKey(ska)  # trim to 24 Bytes
-
-                        #s.sendall(mesage.encode())
-                        encrypt_text=des3Encrypt(ska,mesage.encode())  # Encryption decryption done here..
-                        s.sendall(encrypt_text)
+                    msg=msg.decode()
                     
-                    else:
-
-                        s.connect((host,cli_port))
-                        
-                        ska=generateRandomGroupKey()  # For sending and receiving public keys  # shared key is in string here
-
-                        ska=str(ska)
-                        ska=trimKey(ska)  # trim to 24 Bytes
-
-                        s.sendall(("G;"+usr+';'+ska).encode())
-                        prDc[usr]=ska
-                        grpName=usr
-
-                        #s.sendall(mesage.encode())
-                        encrypt_text=des3Encrypt(ska,mesage.encode())  # Encryption decryption done here..
-
-                        s.sendall(encrypt_text)
-        toGrpFlag=False
 
 
-        print("Message sent successfully")
-        s.close()
 
 
-def sendfile(s,usr,filepath):
-    global toGrpFlag
-    strn = "port;"+usr+";"+curr_user
-    s.sendall(strn.encode())
-    data = s.recv(1024).decode()
-    mylst=data.split(";")
-    if(mylst[-1]=='0'):
-        print(mylst[0])
-    else:
-        if(mylst[-1]=='1G'):
-            toGrpFlag=True
-        for usr in mylst:
-            if usr!=mylst[-1]:
-                cli_port=int(usr)
-                with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
-                    s.connect((host,cli_port))
-                    message = "sendfile;"+filepath+";"
 
-                    f=open(filepath,'rb')
-                    cont=f.read()
-                    message=message.encode()
+
+                ####################################################################
+
+
+                mylst=msg.strip().split(';',2)
+                print(mylst)
+                if mylst[0]!='sendfile':
+                    print(mylst[0])
+                else:
+                    cont=b""
+                    path=mylst[1].split('/')[-1]
+                    cont=mylst[2].encode()
+                    f=open(path,'wb')
+                    while True:
+                        encrypt_msg_recvd=conn.recv(1024)
+
+                        data=obj.des3Decrypt(kb,encrypt_msg_recvd)  # In Bytes..
+                        #data=conn.recv(1024)
+                        cont+=data
+                        if len(data)<1024:
+                            break
+                    
+                    
+                    f.write(cont)
                     f.close()
 
-                    if toGrpFlag==False:
-                        ska=keyCall(s)  # For sending and receiving public keys  # shared key is in string here
 
-                        ska=trimKey(ska)  # trim to 24 Bytes
+                
 
-                        #s.sendall(mesage.encode())
-                        encrypt_text=des3Encrypt(ska,message)  # Encryption decryption done here..
-                        s.sendall(encrypt_text)
+                
+            
+            # s.close()
 
-                        encrypt_text=des3Encrypt(ska,cont)
-                        s.sendall(encrypt_text)
+    def sendmsg(self,s,usr,mesage):
+        global toGrpFlag
+        strn = "port;"+usr+";"+curr_user
+        print(strn)
+        s.sendall(strn.encode())
+        data = s.recv(1024).decode()
+        mylst=data.split(";")
+        if(mylst[-1]=='0'):
+            print(mylst[0])
+        else:
+            if(mylst[-1]=='1G'):
+                toGrpFlag=True
+            for usr in mylst:
+                if usr!=mylst[-1]:
+                    cli_port=int(usr)
+                    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
 
+                        if(toGrpFlag==False):
 
-                        #s.sendall(message)
-                        #s.sendall(cont)
+                            s.connect((host,cli_port))
+                            ska=obj.keyCall(s)  # For sending and receiving public keys  # shared key is in string here
+
+                            ska=obj.trimKey(ska)  # trim to 24 Bytes
+
+                            #s.sendall(mesage.encode())
+                            encrypt_text=obj.des3Encrypt(ska,mesage.encode())  # Encryption decryption done here..
+                            s.sendall(encrypt_text)
                         
-                    else:
-                        ska=generateRandomGroupKey()  # For sending and receiving public keys  # shared key is in string here
+                        else:
 
-                        ska=str(ska)
-                        ska=trimKey(ska)  # trim to 24 Bytes
+                            s.connect((host,cli_port))
+                            
+                            ska=obj.generateRandomGroupKey()  # For sending and receiving public keys  # shared key is in string here
 
-                        s.sendall(("G;"+usr+';'+ska).encode())
-                        prDc[usr]=ska
-                        grpName=usr
+                            ska=str(ska)
+                            ska=obj.trimKey(ska)  # trim to 24 Bytes
 
-                        #s.sendall(mesage.encode())
-                        encrypt_text=des3Encrypt(ska,message)  # Encryption decryption done here..
+                            s.sendall(("G;"+usr+';'+ska).encode())
+                            prDc[usr]=ska
+                            grpName=usr
 
-                        s.sendall(encrypt_text)
+                            #s.sendall(mesage.encode())
+                            encrypt_text=obj.des3Encrypt(ska,mesage.encode())  # Encryption decryption done here..
 
-                        encrypt_text=des3Encrypt(ska,cont)  # Encryption decryption done here..
-
-                        s.sendall(encrypt_text)
-                    print("File sent successfully")
-        s.close()
-
-def signup(clsock,id,passw):
-    
-    strn = "signup;"+id+";"+passw
-    s.send(strn.encode())
-    data = s.recv(1024).decode()
-    print(data)
+                            s.sendall(encrypt_text)
+            toGrpFlag=False
 
 
-def login(clsock,id,passw,curr_port):
-    global islogged
-    global curr_user
+            print("Message sent successfully")
+            s.close()
 
-    if(islogged==0):
-        strn = "login;"+id+";"+passw+";"+curr_port
+
+    def sendfile(self,s,usr,filepath):
+        global toGrpFlag
+        strn = "port;"+usr+";"+curr_user
         s.sendall(strn.encode())
         data = s.recv(1024).decode()
-        print(data.split(";")[0])
-        if(data.split(";")[1]=='1'):
-            islogged=1
-        curr_user=id
-    else:
-        print("someone is already logged in")
+        mylst=data.split(";")
+        if(mylst[-1]=='0'):
+            print(mylst[0])
+        else:
+            if(mylst[-1]=='1G'):
+                toGrpFlag=True
+            for usr in mylst:
+                if usr!=mylst[-1]:
+                    cli_port=int(usr)
+                    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
+                        s.connect((host,cli_port))
+                        message = "sendfile;"+filepath+";"
 
-def creategrp(s,grpname):
-    global islogged
-    global curr_user
+                        f=open(filepath,'rb')
+                        cont=f.read()
+                        message=message.encode()
+                        f.close()
 
-    if islogged==1:
-        strn="create;"+grpname+";"+curr_user
-        s.sendall(strn.encode())
+                        if toGrpFlag==False:
+                            ska=obj.keyCall(s)  # For sending and receiving public keys  # shared key is in string here
+
+                            ska=obj.trimKey(ska)  # trim to 24 Bytes
+
+                            #s.sendall(mesage.encode())
+                            encrypt_text=obj.des3Encrypt(ska,message)  # Encryption decryption done here..
+                            s.sendall(encrypt_text)
+
+                            encrypt_text=obj.des3Encrypt(ska,cont)
+                            s.sendall(encrypt_text)
+
+
+                            #s.sendall(message)
+                            #s.sendall(cont)
+                            
+                        else:
+                            ska=obj.generateRandomGroupKey()  # For sending and receiving public keys  # shared key is in string here
+
+                            ska=str(ska)
+                            ska=obj.trimKey(ska)  # trim to 24 Bytes
+
+                            s.sendall(("G;"+usr+';'+ska).encode())
+                            prDc[usr]=ska
+                            grpName=usr
+
+                            #s.sendall(mesage.encode())
+                            encrypt_text=obj.des3Encrypt(ska,message)  # Encryption decryption done here..
+
+                            s.sendall(encrypt_text)
+
+                            encrypt_text=obj.des3Encrypt(ska,cont)  # Encryption decryption done here..
+
+                            s.sendall(encrypt_text)
+                        print("File sent successfully")
+            s.close()
+
+    def signup(self,clsock,id,passw):
+        
+        strn = "signup;"+id+";"+passw
+        s.send(strn.encode())
         data = s.recv(1024).decode()
         print(data)
-    else:
-        print("user not logged in")
 
-def joingrp(s,grpname):
-    global islogged
-    global curr_user
 
-    if islogged==1:
-        strn="join;"+grpname+";"+curr_user
-        s.sendall(strn.encode())
-        data = s.recv(1024).decode()
-        print(data)
-    else:
-        print("user not logged in") 
+    def login(self,clsock,id,passw,curr_port):
+        global islogged
+        global curr_user
 
-def listgrp(s):
-    global islogged
+        if(islogged==0):
+            strn = "login;"+id+";"+passw+";"+curr_port
+            s.sendall(strn.encode())
+            data = s.recv(1024).decode()
+            print(data.split(";")[0])
+            if(data.split(";")[1]=='1'):
+                islogged=1
+            curr_user=id
+        else:
+            print("someone is already logged in")
 
-    if islogged==1:
-        strn="list;"
-        s.sendall(strn.encode())
-        data = s.recv(1024).decode()
-        grplist=data.split(";")
-        for i in grplist:
-            print(i)
-    else:
-        print("user not logged in")   
+    def creategrp(self,s,grpname):
+        global islogged
+        global curr_user
+
+        if islogged==1:
+            strn="create;"+grpname+";"+curr_user
+            s.sendall(strn.encode())
+            data = s.recv(1024).decode()
+            print(data)
+        else:
+            print("user not logged in")
+
+    def joingrp(self,s,grpname):
+        global islogged
+        global curr_user
+
+        if islogged==1:
+            strn="join;"+grpname+";"+curr_user
+            s.sendall(strn.encode())
+            data = s.recv(1024).decode()
+            print(data)
+        else:
+            print("user not logged in") 
+
+    def listgrp(self,s):
+        global islogged
+
+        if islogged==1:
+            strn="list;"
+            s.sendall(strn.encode())
+            data = s.recv(1024).decode()
+            grplist=data.split(";")
+            for i in grplist:
+                print(i)
+        else:
+            print("user not logged in")   
+
+clobj = Client_send()
 
 with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
     s.connect((host,port))
     curr_port=sys.argv[1]
 
-    t1=threading.Thread(target=serverthread,args=(curr_port,))
+    t1=threading.Thread(target=clobj.serverthread,args=(curr_port,))
             
     t1.start()
     while True:
@@ -500,28 +506,28 @@ with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
         mylst = data.split()
         print("")
         if(mylst[0].lower()=="login"):
-            login(s,mylst[1],mylst[2],curr_port)
+            clobj.login(s,mylst[1],mylst[2],curr_port)
         elif(mylst[0].lower()=="signup"):
             if(islogged==0):
-                signup(s,mylst[1],mylst[2])
+                clobj.signup(s,mylst[1],mylst[2])
             else:
                 print("already logged in")
         elif(mylst[0].lower()=="send"):
             if(islogged==1):
                 if(mylst[1]!="file"):
                     mystr = (" ").join(mylst[2:])
-                    sendmsg(s,mylst[1],mystr)
+                    clobj.sendmsg(s,mylst[1],mystr)
                 else:
-                    sendfile(s,mylst[3],mylst[2])
+                    clobj.sendfile(s,mylst[3],mylst[2])
             else:
                 print("user not logged in")
         elif(mylst[0].lower()=="create"):
-            creategrp(s,mylst[1])
+            clobj.creategrp(s,mylst[1])
         elif(mylst[0].lower()=="join"):
-            joingrp(s,mylst[1])
+            clobj.joingrp(s,mylst[1])
         elif(mylst[0].lower()=="list"):
-            listgrp(s)
+            clobj.listgrp(s)
         else:
-            print("go")
+            print("Invalid Command")
         print()
     s.close()
